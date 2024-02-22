@@ -2,11 +2,8 @@ const API_KEY = `40b8bde5eada4aa9a2884a3e8ba42c2b`;
 let newsList = [];
 let noImage = "https://upload.wikimedia.org/wikipedia/commons/d/d1/Image_not_available.png";
 const menus = document.querySelectorAll(".menus button");
-console.log(menus);
-const sideMenus = document.querySelectorAll("#menu-list button");
-console.log(sideMenus);
+
 menus.forEach((menu)=>menu.addEventListener("click",(event)=>getNewsByCategory(event)));
-sideMenus.forEach((menu)=>menu.addEventListener("click",(event)=>getNewsByCategory(event)));
 
 const getLatestNews = async ()=>{
     // const url = new URL(`https://newsapi.org/v2/top-headlines?country=us&apiKey=${API_KEY}`);
