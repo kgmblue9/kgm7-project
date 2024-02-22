@@ -30,8 +30,8 @@ const getNewsByCategory = async (event)=>{
 
 const searchNews = async ()=>{
     query = document.getElementById("search-input").value.toLowerCase();
-    const url = new URL(`https://newsapi.org/v2/everything?q=${query}&apiKey=${API_KEY}`);
-    //const url = new URL(`https://kgm7.netlify.app/everything?q=${query}`);    
+    //const url = new URL(`https://newsapi.org/v2/everything?q=${query}&apiKey=${API_KEY}`);
+    const url = new URL(`https://kgm7.netlify.app/everything?q=${query}`);    
     const response = await fetch(url);
     const data = await response.json();
     newsList = data.articles;
