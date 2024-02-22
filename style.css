@@ -35,6 +35,10 @@
     padding: 0px 5px;
 }
 
+.search-button {
+    border: none;
+}
+
 .side {
     height: 100%;
     width: 0;
