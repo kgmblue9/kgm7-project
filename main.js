@@ -2,53 +2,85 @@ const API_KEY = `40b8bde5eada4aa9a2884a3e8ba42c2b`;
 let newsList = [];
 let noImage = "https://upload.wikimedia.org/wikipedia/commons/d/d1/Image_not_available.png";
 const menus = document.querySelectorAll(".menus button");
+const searchInput = document.getElementById("search-input");
 
 menus.forEach((menu)=>menu.addEventListener("click",(event)=>getNewsByCategory(event)));
+searchInput.addEventListener("keyup",enterKey);
+
+let url = new URL(`https://newsapi.org/v2/top-headlines?country=us&apiKey=${API_KEY}`);
+
+function enterKey(event){
+    if (event.key === "Enter"){
+        searchNews();
+    }
+}
+
+const getNews = async ()=>{
+    try {
+        const response = await fetch(url);
+        console.log(response)
+        const data = await response.json();
+
+        console.log(data)
+
+        if(response.status===200){
+            if(data.articles.length === 0){
+                throw new Error("No result for this search");
+            }
+            newsList = data.articles;
+            render();
+        } else {
+            throw new Error(data.message);
+        }
+    } catch (error){
+        errorRender(error.message)
+    }
+}
 
 const getLatestNews = async ()=>{
-    // const url = new URL(`https://newsapi.org/v2/top-headlines?country=us&apiKey=${API_KEY}`);
-    // const url = new URL(`http://times-node-env.eba-appvq3ef.ap-northeast-2.elasticbeanstalk.com/top-headlines`);
-    const url = new URL(`https://kgm7.netlify.app/top-headlines`);    
-    const response = await fetch(url);
-    const data = await response.json();
-    newsList = data.articles;
-    render();
+    // url = new URL(`https://newsapi.org/v2/top-headlines?country=us&apiKey=${API_KEY}`);
+    // url = new URL(`http://times-node-env.eba-appvq3ef.ap-northeast-2.elasticbeanstalk.com/top-headlines`);
+    // url = new URL(`https://kgm7.netlify.app/top-headlines`);    
+    getNews();
+
 };
 
 const getNewsByCategory = async (event)=>{
     category = event.target.textContent.toLowerCase();
-    // const url = new URL(`https://newsapi.org/v2/top-headlines?country=us&category=${category}&apiKey=${API_KEY}`);
-    const url = new URL(`https://kgm7.netlify.app/top-headlines?country=us&category=${category}`);    
-    const response = await fetch(url);
-    const data = await response.json();
-    newsList = data.articles;
-    render();
+     url = new URL(`https://newsapi.org/v2/top-headlines?country=us&category=${category}&apiKey=${API_KEY}`);
+    // url = new URL(`https://kgm7.netlify.app/top-headlines?country=us&category=${category}`);    
+    getNews();
+
 };
 
 const searchNews = async ()=>{
-    query = document.getElementById("search-input").value.toLowerCase();
-    //const url = new URL(`https://newsapi.org/v2/everything?q=${query}&apiKey=${API_KEY}`);
-    const url = new URL(`https://kgm7.netlify.app/everything?q=${query}`);    
-    const response = await fetch(url);
-    const data = await response.json();
-    newsList = data.articles;
-    render();
+    query = searchInput.value.toLowerCase();
+    url = new URL(`https://newsapi.org/v2/everything?q=${query}&apiKey=${API_KEY}`);
+    //url = new URL(`https://kgm7.netlify.app/everything?q=${query}`);    
+    getNews();
 };
 
-    const render = ()=>{
-        const newsHTML = newsList.map((news) => `<div class = "row news">
-        <div class = "col-lg-4">
-            <img class = "news-img-size" src="${news.urlToImage??noImage}">
-        </div>
-        <div class = "col-lg-8">
-            <h2>${news.title}</h2>
-            <p>${news.description??"내용없음"}</P>
-            <div>${news.source.name??"no source"} , ${moment(news.publishedAt).fromNow()}</div>
-        </div>
-    </div>`
-    ).join('');
-        document.getElementById('news-board').innerHTML = newsHTML;
-    };
+const render = ()=>{
+    const newsHTML = newsList.map((news) => `<div class = "row news">
+    <div class = "col-lg-4">
+        <img class = "news-img-size" src="${news.urlToImage??noImage}">
+    </div>
+    <div class = "col-lg-8">
+        <h2>${news.title}</h2>
+        <p>${news.description??"내용없음"}</P>
+        <div>${news.source.name??"no source"} , ${moment(news.publishedAt).fromNow()}</div>
+    </div>
+</div>`
+).join('');
+    document.getElementById('news-board').innerHTML = newsHTML;
+};
+
+const errorRender = (errorMessage)=>{
+    const errorHTML = `<div class="alert alert-danger" role="alert">
+        ${errorMessage}
+    </div>`;
+    document.getElementById('news-board').innerHTML = errorHTML;
+};
 
 moment().startOf('hour').fromNow();  
   
