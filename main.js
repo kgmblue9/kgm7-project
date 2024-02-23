@@ -64,7 +64,7 @@ const render = ()=>{
         <img class = "news-img-size" src="${news.urlToImage??noImage}">
     </div>
     <div class = "col-lg-8">
-        <h4>${news.title}</h4>
+        <h3>${news.title}</h3>
         <p>${news.description??"내용없음"}</P>
         <div>${news.source.name??"no source"} , ${moment(news.publishedAt).fromNow()}</div>
     </div>
