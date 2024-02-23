@@ -7,7 +7,8 @@ const searchInput = document.getElementById("search-input");
 menus.forEach((menu)=>menu.addEventListener("click",(event)=>getNewsByCategory(event)));
 searchInput.addEventListener("keyup",enterKey);
 
-let url = new URL(`https://newsapi.org/v2/top-headlines?country=us&apiKey=${API_KEY}`);
+//let url = new URL(`https://newsapi.org/v2/top-headlines?country=us&apiKey=${API_KEY}`);
+let url = new URL(`https://kgm7.netlify.app/top-headlines`);
 
 function enterKey(event){
     if (event.key === "Enter"){
@@ -33,30 +34,30 @@ const getNews = async ()=>{
             throw new Error(data.message);
         }
     } catch (error){
-        errorRender(error.message)
+         errorRender(error.message)
     }
 }
 
 const getLatestNews = async ()=>{
-    // url = new URL(`https://newsapi.org/v2/top-headlines?country=us&apiKey=${API_KEY}`);
-    // url = new URL(`http://times-node-env.eba-appvq3ef.ap-northeast-2.elasticbeanstalk.com/top-headlines`);
-    // url = new URL(`https://kgm7.netlify.app/top-headlines`);    
+    //url = new URL(`https://newsapi.org/v2/top-headlines?country=us&apiKey=${API_KEY}`);
+    //url = new URL(`http://times-node-env.eba-appvq3ef.ap-northeast-2.elasticbeanstalk.com/top-headlines`);
+    url = new URL(`https://kgm7.netlify.app/top-headlines`);    
     getNews();
 
 };
 
 const getNewsByCategory = async (event)=>{
     category = event.target.textContent.toLowerCase();
-     url = new URL(`https://newsapi.org/v2/top-headlines?country=us&category=${category}&apiKey=${API_KEY}`);
-    // url = new URL(`https://kgm7.netlify.app/top-headlines?country=us&category=${category}`);    
+    // url = new URL(`https://newsapi.org/v2/top-headlines?country=us&category=${category}&apiKey=${API_KEY}`);
+    url = new URL(`https://kgm7.netlify.app/top-headlines?country=us&category=${category}`);    
     getNews();
 
 };
 
 const searchNews = async ()=>{
     query = searchInput.value.toLowerCase();
-    url = new URL(`https://newsapi.org/v2/everything?q=${query}&apiKey=${API_KEY}`);
-    //url = new URL(`https://kgm7.netlify.app/everything?q=${query}`);    
+    //url = new URL(`https://newsapi.org/v2/everything?q=${query}&apiKey=${API_KEY}`);   
+    url = new URL(`https://kgm7.netlify.app/top-headlines?q=${query}`);    
     getNews();
 };
 
@@ -66,7 +67,7 @@ const render = ()=>{
         <img class = "news-img-size" src="${news.urlToImage??noImage}">
     </div>
     <div class = "col-lg-8">
-        <h2>${news.title}</h2>
+        <h4>${news.title}</h4>
         <p>${news.description??"내용없음"}</P>
         <div>${news.source.name??"no source"} , ${moment(news.publishedAt).fromNow()}</div>
     </div>
