@@ -9,10 +9,10 @@ searchInput.addEventListener("keyup",enterKey);
 
 //let url = new URL(`https://newsapi.org/v2/top-headlines?country=us&apiKey=${API_KEY}`);
 let url = new URL(`https://kgm7.netlify.app/top-headlines`);
-let totalResults = 0;
-let page = 1;
-const pageSize = 10;
-const groupSize = 5;
+let totalResults = 0;  // 전체 기사 수
+let page = 1;          // 현재 페이지
+const pageSize = 17;   // 한 페이지당 기사 수
+const groupSize = 5;   // 한 화면에 보여지는 페이지 수
 
 function enterKey(event){
     if (event.key === "Enter"){
@@ -30,6 +30,8 @@ const getNews = async ()=>{
 
         if(response.status===200){
             if(data.articles.length === 0){
+                totalResults = 1;
+                paginationRender();
                 throw new Error("No result for this search");
             }
             newsList = data.articles;
@@ -55,6 +57,7 @@ const getLatestNews = async ()=>{
 
 const getNewsByCategory = async (event)=>{
     category = event.target.textContent.toLowerCase();
+    page = 1;
     // url = new URL(`https://newsapi.org/v2/top-headlines?country=us&category=${category}&apiKey=${API_KEY}`);
     url = new URL(`https://kgm7.netlify.app/top-headlines?country=us&category=${category}`);    
     getNews();
@@ -63,6 +66,7 @@ const getNewsByCategory = async (event)=>{
 
 const searchNews = async ()=>{
     query = searchInput.value.toLowerCase();
+    page = 1;
     //url = new URL(`https://newsapi.org/v2/everything?q=${query}&apiKey=${API_KEY}`);   
     url = new URL(`https://kgm7.netlify.app/top-headlines?q=${query}`);    
     getNews();
@@ -112,21 +116,37 @@ const openSearchBox = () => {
   };
 
 const paginationRender = () => {
-    const totalPages = Math.ceil(totalResults/pageSize);
-    const pageGroup = Math.ceil(page/groupSize);
-    let   lastPage = pageGroup * groupSize;
+    const totalPages = Math.ceil(totalResults/pageSize);  // 전체 페이지 수
+    const pageGroup = Math.ceil(page/groupSize); // 페이지가 속하는 몇 번째 페이지그룹
+    let   lastPage = pageGroup * groupSize; // 화면의 마지막 페이지 번호
       if (lastPage>totalPages){
         lastPage = totalPages;
       }
-    const firstPage = lastPage - (groupSize-1)<=0?1:lastPage - (groupSize-1);
+    const firstPage = lastPage - (groupSize-1)<=0?1:lastPage - (groupSize-1); // 화면의 첫번째 페이지
 
-let paginationHTML = ``
+let paginationHTML = ``;
+let previousPageHTML = ``;
+let nextPageHTML = ``;
+
+
 
 for (i=firstPage;i<=lastPage;i++){
     paginationHTML+= `<li class="page-item ${i===page?"active":""}" onclick="moveToPage(${i})"><a class="page-link" href="#">${i}</a></li>`
 }
 
-document.querySelector(".pagination").innerHTML = paginationHTML;
+if (page>groupSize){
+    //previousPageHTML = `<li class="page-item" onclick="moveToPage(${(pageGroup-1)*groupSize})"><a class="page-link" href="#">Previous</a></li>`
+    previousPageHTML = `<li class="page-item" onclick="moveToPage(${1})"><a class="page-link" href="#">&lt&lt</a></li>
+                        <li class="page-item" onclick="moveToPage(${page-1})"><a class="page-link" href="#">&lt</a></li>`
+}
+
+if (pageGroup<Math.ceil(totalPages/groupSize)){
+    //nextPageHTML = `<li class="page-item" onclick="moveToPage(${(pageGroup*groupSize)+1})"><a class="page-link" href="#">Next</a></li>`
+    nextPageHTML = `<li class="page-item" onclick="moveToPage(${page+1})"><a class="page-link" href="#">&gt</a></li>
+                    <li class="page-item" onclick="moveToPage(${totalPages})"><a class="page-link" href="#">&gt&gt</a></li>`
+}
+
+document.querySelector(".pagination").innerHTML = previousPageHTML + paginationHTML + nextPageHTML;
 
 }
 
